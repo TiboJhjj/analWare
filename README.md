@@ -9,9 +9,7 @@
 - Ability to update the YARA rules repository directly from GitHub.
 - Detailed match reporting including the type of rule that triggered each match.
 
-## Installation
-
-To get started, clone this repository and install the required Python libraries:
+## Get started
 
 ```bash
 git clone https://github.com/TiboJhjj/analWare.git
