@@ -46,7 +46,7 @@ def load_yara_rules_from_folder(folder_path, rule_type):
                 rule_path = os.path.join(root, file)
                 rule = load_yara_rule(rule_path)
                 if rule:
-                    rules.append((rule, rule_type))  # Associate the rule type
+                    rules.append((rule, rule_type))  # Associate rule type
     return rules
 
 # Function to scan a file with a YARA rule
@@ -62,7 +62,7 @@ def scan_file_with_rule(rule, file_path, rule_type):
                         'rule': match.rule,
                         'tags': match.tags,
                         'meta': match.meta,
-                        'type': rule_type  # Associate the rule type with the match
+                        'type': rule_type  # Associate rule type with match
                     })
     except yara.Error:
         with lock:
@@ -86,7 +86,7 @@ def scan_file_with_all_rules(rules, file_path):
     print(f"Total number of matches found: {match_count}")
     print(f"Total number of errors encountered: {error_count}")
     
-    # Display match details found
+    # Display details of matches found
     if matches_details:
         print("\n--- Match Details ---")
         for i, match in enumerate(matches_details, 1):
@@ -94,17 +94,25 @@ def scan_file_with_all_rules(rules, file_path):
             print(f"Rule Type: {rules_dict[match['type']]}")
             print(f"Rule: {match['rule']}")
             print(f"Tags: {', '.join(match['tags']) if match['tags'] else 'None'}")
-            print(f"Identifiers (meta): {match['meta']}")
+            print(f"Meta Identifiers: {match['meta']}")
     else:
         print("No matches found.")
 
-# Function to execute a git pull in the rules folder
+# Function to execute a git clone in the rules directory
+def clone_rules_repository():
+    try:
+        subprocess.run(['git', 'clone', 'https://github.com/Yara-Rules/rules.git'], check=True)
+        print("Rules cloned successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error cloning rules: {e}")
+
+# Function to execute a git pull in the rules directory
 def update_rules_repository():
     try:
         subprocess.run(['git', '-C', 'rules', 'pull'], check=True)
         print("Rules updated successfully.")
     except subprocess.CalledProcessError as e:
-        print(f"Error while updating rules: {e}")
+        print(f"Error updating rules: {e}")
 
 # Main function with argparse
 def main():
@@ -152,8 +160,14 @@ def main():
     parser.add_argument(
         "--update", action='store_true', help="Update the rules repository with git pull"
     )
+    parser.add_argument(
+        "--init", action='store_true', help="Clone the rules repository"
+    )
 
     args = parser.parse_args()
+
+    if args.init:
+        clone_rules_repository()
 
     if args.update:
         update_rules_repository()

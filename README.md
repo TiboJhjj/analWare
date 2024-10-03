@@ -14,22 +14,26 @@
 To get started, clone this repository and install the required Python libraries:
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd <YOUR_REPOSITORY_NAME>
+git clone https://github.com/TiboJhjj/analWare.git
+cd analWare
 pip install -r requirements.txt
-git clone https://github.com/Yara-Rules/rules.git
+python analWare.py --init
 ```
 
 ## Help tool
 
 ```bash
-usage: AnalWare.py [-h] [-f FILE] [-M] [-Cr] [-AB] [-C] [-EK] [-WS] [-E] [-MM] [-CV] [-P] [-MD] [-ALL]
-                   [--update]
+usage: analWare.py [-h] [--init] [-f FILE] [-M] [-Cr] [-AB] [-C] [-EK] [-WS] [-E] [-MM] [-CV] [-P]
+                  [-MD] [-ALL] [--update]
 
 File analysis with YARA rules
 
 options:
   -h, --help            show this help message and exit
+
+  --init                initialize the project by cloning the rules repository
+  --update              Update the rules repository
+
   -f FILE, --file FILE  Path to the file to analyze
   -M                    Use malware rules
   -Cr                   Use crypto rules
@@ -43,5 +47,4 @@ options:
   -P                    Use packers rules
   -MD                   Use maldocs rules
   -ALL                  Use all rules
-  --update              Update the rules repository with git pull
 ```
