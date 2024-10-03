@@ -19,3 +19,29 @@ cd <YOUR_REPOSITORY_NAME>
 pip install -r requirements.txt
 git clone https://github.com/Yara-Rules/rules.git
 ```
+
+## Help tool
+
+```bash
+usage: AnalWare.py [-h] [-f FILE] [-M] [-Cr] [-AB] [-C] [-EK] [-WS] [-E] [-MM] [-CV] [-P] [-MD] [-ALL]
+                   [--update]
+
+Analyse de fichier avec règles YARA
+
+options:
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  Chemin du fichier à analyser
+  -M                    Utiliser les règles de malware
+  -Cr                   Utiliser les règles de crypto
+  -AB                   Utiliser les règles d'anti-debug/anti-VM
+  -C                    Utiliser les règles de capabilities
+  -EK                   Utiliser les règles d'exploit kits
+  -WS                   Utiliser les règles de webshell
+  -E                    Utiliser les règles d'email
+  -MM                   Utiliser les règles de mobile malware
+  -CV                   Utiliser les règles de CVE
+  -P                    Utiliser les règles de packers
+  -MD                   Utiliser les règles de maldocs
+  -ALL                  Utiliser toutes les règles
+  --update              Mettre à jour le dépôt de règles avec git pull
+```
