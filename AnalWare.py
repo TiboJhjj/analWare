@@ -4,7 +4,7 @@ import threading
 import argparse
 import subprocess
 
-# Dictionnaire pour lier les types de règles à leurs chemins
+# Dictionary to link rule types to their paths
 rules_dict = {
     "M": "rules/malware",            
     "Cr": "rules/crypto",            
@@ -20,13 +20,13 @@ rules_dict = {
     "ALL": "all"                      
 }
 
-# Variables globales pour le suivi des résultats
+# Global variables for tracking results
 match_count = 0
 error_count = 0
-matches_details = []  # Pour stocker les détails des matchs
-lock = threading.Lock()  # Pour synchroniser l'accès aux variables partagées
+matches_details = []  # To store match details
+lock = threading.Lock()  # To synchronize access to shared variables
 
-# Fonction pour charger un fichier de règles YARA
+# Function to load a YARA rule file
 def load_yara_rule(rule_file):
     try:
         rules = yara.compile(filepath=rule_file)
@@ -37,7 +37,7 @@ def load_yara_rule(rule_file):
             error_count += 1
         return None
 
-# Fonction pour charger toutes les règles YARA à partir d'un dossier
+# Function to load all YARA rules from a folder
 def load_yara_rules_from_folder(folder_path, rule_type):
     rules = []
     for root, _, files in os.walk(folder_path):
@@ -46,10 +46,10 @@ def load_yara_rules_from_folder(folder_path, rule_type):
                 rule_path = os.path.join(root, file)
                 rule = load_yara_rule(rule_path)
                 if rule:
-                    rules.append((rule, rule_type))  # Associer le type de règle
+                    rules.append((rule, rule_type))  # Associate the rule type
     return rules
 
-# Fonction pour scanner un fichier avec une règle YARA
+# Function to scan a file with a YARA rule
 def scan_file_with_rule(rule, file_path, rule_type):
     global match_count, error_count, matches_details
     try:
@@ -62,13 +62,13 @@ def scan_file_with_rule(rule, file_path, rule_type):
                         'rule': match.rule,
                         'tags': match.tags,
                         'meta': match.meta,
-                        'type': rule_type  # Associer le type de règle au match
+                        'type': rule_type  # Associate the rule type with the match
                     })
     except yara.Error:
         with lock:
             error_count += 1
 
-# Fonction pour scanner un fichier avec toutes les règles YARA
+# Function to scan a file with all YARA rules
 def scan_file_with_all_rules(rules, file_path):
     threads = []
     for rule, rule_type in rules:
@@ -76,82 +76,81 @@ def scan_file_with_all_rules(rules, file_path):
         threads.append(thread)
         thread.start()
 
-    # Attendre que tous les threads se terminent
+    # Wait for all threads to finish
     for thread in threads:
         thread.join()
 
-    # Affichage des résultats après l'analyse
-    print("\n--- Résumé de l'analyse ---")
-    print(f"Nombre total de threads utilisés : {len(threads)}")
-    print(f"Nombre total de matchs trouvés : {match_count}")
-    print(f"Nombre total d'erreurs rencontrées : {error_count}")
+    # Display results after analysis
+    print("\n--- Analysis Summary ---")
+    print(f"Total number of threads used: {len(threads)}")
+    print(f"Total number of matches found: {match_count}")
+    print(f"Total number of errors encountered: {error_count}")
     
-    # Afficher les détails des matchs trouvés
+    # Display match details found
     if matches_details:
-        print("\n--- Détails des matchs ---")
+        print("\n--- Match Details ---")
         for i, match in enumerate(matches_details, 1):
             print(f"\nMatch {i}:")
-            print(f"Type de règle : {rules_dict[match['type']]}")
-            print(f"Règle : {match['rule']}")
-            print(f"Tags : {', '.join(match['tags']) if match['tags'] else 'Aucun'}")
-            print(f"Identifiants (meta) : {match['meta']}")
+            print(f"Rule Type: {rules_dict[match['type']]}")
+            print(f"Rule: {match['rule']}")
+            print(f"Tags: {', '.join(match['tags']) if match['tags'] else 'None'}")
+            print(f"Identifiers (meta): {match['meta']}")
     else:
-        print("Aucun match trouvé.")
+        print("No matches found.")
 
-# Fonction pour exécuter un git pull dans le dossier des règles
+# Function to execute a git pull in the rules folder
 def update_rules_repository():
     try:
         subprocess.run(['git', '-C', 'rules', 'pull'], check=True)
-        print("Mise à jour des règles effectuée avec succès.")
+        print("Rules updated successfully.")
     except subprocess.CalledProcessError as e:
-        print(f"Erreur lors de la mise à jour des règles : {e}")
+        print(f"Error while updating rules: {e}")
 
-# Fonction principale avec argparse
+# Main function with argparse
 def main():
-    parser = argparse.ArgumentParser(description="Analyse de fichier avec règles YARA")
+    parser = argparse.ArgumentParser(description="File analysis with YARA rules")
     parser.add_argument(
         "-f", "--file", 
-
-        help="Chemin du fichier à analyser"
+        help="Path to the file to analyze"
     )
     parser.add_argument(
-        "-M", action='store_true', help="Utiliser les règles de malware"
+        "-M", action='store_true', help="Use malware rules"
     )
     parser.add_argument(
-        "-Cr", action='store_true', help="Utiliser les règles de crypto"
+        "-Cr", action='store_true', help="Use crypto rules"
     )
     parser.add_argument(
-        "-AB", action='store_true', help="Utiliser les règles d'anti-debug/anti-VM"
+        "-AB", action='store_true', help="Use anti-debug/anti-VM rules"
     )
     parser.add_argument(
-        "-C", action='store_true', help="Utiliser les règles de capabilities"
+        "-C", action='store_true', help="Use capabilities rules"
     )
     parser.add_argument(
-        "-EK", action='store_true', help="Utiliser les règles d'exploit kits"
+        "-EK", action='store_true', help="Use exploit kits rules"
     )
     parser.add_argument(
-        "-WS", action='store_true', help="Utiliser les règles de webshell"
+        "-WS", action='store_true', help="Use webshell rules"
     )
     parser.add_argument(
-        "-E", action='store_true', help="Utiliser les règles d'email"
+        "-E", action='store_true', help="Use email rules"
     )
     parser.add_argument(
-        "-MM", action='store_true', help="Utiliser les règles de mobile malware"
+        "-MM", action='store_true', help="Use mobile malware rules"
     )
     parser.add_argument(
-        "-CV", action='store_true', help="Utiliser les règles de CVE"
+        "-CV", action='store_true', help="Use CVE rules"
     )
     parser.add_argument(
-        "-P", action='store_true', help="Utiliser les règles de packers"
+        "-P", action='store_true', help="Use packers rules"
     )
     parser.add_argument(
-        "-MD", action='store_true', help="Utiliser les règles de maldocs"
+        "-MD", action='store_true', help="Use maldocs rules"
     )
     parser.add_argument(
-        "-ALL", action='store_true', help="Utiliser toutes les règles"
+        "-ALL", action='store_true', help="Use all rules"
     )
     parser.add_argument(
-        "--update", action='store_true', help="Mettre à jour le dépôt de règles avec git pull"
+        "--update", action='store_true', help="Update the rules repository with git pull"
     )
 
     args = parser.parse_args()
@@ -160,21 +159,21 @@ def main():
         update_rules_repository()
 
     if args.ALL:
-        selected_rule_types = list(rules_dict.keys())[:-1]  # Toutes les règles sauf "all"
+        selected_rule_types = list(rules_dict.keys())[:-1]  # All rules except "all"
     else:
         selected_rule_types = [key for key, value in vars(args).items() if value and key in rules_dict]
 
     if not selected_rule_types:
-        print("Aucun type de règle valide sélectionné.")
+        print("No valid rule type selected.")
         return
 
     file_path = args.file
 
     if not os.path.exists(file_path):
-        print(f"Le fichier {file_path} n'existe pas.")
+        print(f"The file {file_path} does not exist.")
         return
 
-    # Charger les règles pour les types sélectionnés
+    # Load rules for the selected types
     all_rules = []
     for rule_type in selected_rule_types:
         folder_path = rules_dict[rule_type]
@@ -183,10 +182,10 @@ def main():
             all_rules.extend(rules)
 
     if all_rules:
-        # Analyser le fichier avec toutes les règles en parallèle
+        # Analyze the file with all rules in parallel
         scan_file_with_all_rules(all_rules, file_path)
     else:
-        print("Aucune règle valide trouvée dans les dossiers sélectionnés.")
+        print("No valid rules found in the selected folders.")
 
 if __name__ == "__main__":
     main()

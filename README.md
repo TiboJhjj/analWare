@@ -26,22 +26,22 @@ git clone https://github.com/Yara-Rules/rules.git
 usage: AnalWare.py [-h] [-f FILE] [-M] [-Cr] [-AB] [-C] [-EK] [-WS] [-E] [-MM] [-CV] [-P] [-MD] [-ALL]
                    [--update]
 
-Analyse de fichier avec règles YARA
+File analysis with YARA rules
 
 options:
   -h, --help            show this help message and exit
-  -f FILE, --file FILE  Chemin du fichier à analyser
-  -M                    Utiliser les règles de malware
-  -Cr                   Utiliser les règles de crypto
-  -AB                   Utiliser les règles d'anti-debug/anti-VM
-  -C                    Utiliser les règles de capabilities
-  -EK                   Utiliser les règles d'exploit kits
-  -WS                   Utiliser les règles de webshell
-  -E                    Utiliser les règles d'email
-  -MM                   Utiliser les règles de mobile malware
-  -CV                   Utiliser les règles de CVE
-  -P                    Utiliser les règles de packers
-  -MD                   Utiliser les règles de maldocs
-  -ALL                  Utiliser toutes les règles
-  --update              Mettre à jour le dépôt de règles avec git pull
+  -f FILE, --file FILE  Path to the file to analyze
+  -M                    Use malware rules
+  -Cr                   Use crypto rules
+  -AB                   Use anti-debug/anti-VM rules
+  -C                    Use capabilities rules
+  -EK                   Use exploit kits rules
+  -WS                   Use webshell rules
+  -E                    Use email rules
+  -MM                   Use mobile malware rules
+  -CV                   Use CVE rules
+  -P                    Use packers rules
+  -MD                   Use maldocs rules
+  -ALL                  Use all rules
+  --update              Update the rules repository with git pull
 ```
