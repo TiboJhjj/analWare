@@ -3,3 +3,4 @@ rules/
 AnalWare.build/
 AnalWare.dist/
 AnalWare.onefile-build/
+AnalWare.bin
